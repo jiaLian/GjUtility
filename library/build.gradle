@@ -1,15 +1,14 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'com.novoda.bintray-release'
+def version= "0.1.0"
 android {
     compileSdkVersion 28
-
-
 
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
-        versionName "0.1.0"
+        versionName version
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -31,4 +30,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+publish {
+    repoName = 'goodJia'           //bintray仓库名
+    userOrg = 'jialian'           //bintray注册的用户名
+    groupId = 'com.goodjia'            //compile引用时的第1部分groupId
+    artifactId = 'utility'       //compile引用时的第2部分项目名
+    publishVersion = version       //compile引用时的第3部分版本号
+    desc = 'Good Jia utility android library'//描述，不重要
+    website = 'https://github.com/jiaLian/GjUtility'//网站，不重要；尽量模拟github上的地址
 }

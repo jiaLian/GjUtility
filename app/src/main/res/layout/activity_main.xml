@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".MainActivity">
+
+    <requestFocus />
+
+    <Button
+        android:id="@+id/btnClearHid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="清除 HID Key Code"
+        app:layout_constraintEnd_toStartOf="@id/btnLogV"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnLogV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LogV"
+        app:layout_constraintEnd_toStartOf="@id/btnLogE"
+        app:layout_constraintStart_toEndOf="@id/btnClearHid"
+        app:layout_constraintTop_toTopOf="@id/btnClearHid" />
+
+    <Button
+        android:id="@+id/btnLogE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LogE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnLogV"
+        app:layout_constraintTop_toTopOf="@id/btnLogV" />
+
+    <Button
+        android:id="@+id/btnLogD"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LogD"
+        app:layout_constraintEnd_toStartOf="@id/btnLogI"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnClearHid" />
+
+    <Button
+        android:id="@+id/btnLogI"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LogI"
+        app:layout_constraintEnd_toStartOf="@id/btnLogW"
+        app:layout_constraintStart_toEndOf="@id/btnLogD"
+        app:layout_constraintTop_toTopOf="@id/btnLogD" />
+
+    <Button
+        android:id="@+id/btnLogW"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LogW"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnLogI"
+        app:layout_constraintTop_toTopOf="@id/btnLogI" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/btnClearHid">
+
+        <TextView
+            android:id="@+id/tvHidReader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

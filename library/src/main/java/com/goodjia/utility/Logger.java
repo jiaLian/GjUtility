@@ -3,7 +3,7 @@ package com.goodjia.utility;
 
 import android.util.Log;
 
-public final class GjLogger {
+public final class Logger {
     private static int level = Log.DEBUG;
     private static boolean isDebug = false;
 
@@ -47,7 +47,7 @@ public final class GjLogger {
     }
 
     public static void setIsDebug(boolean isDebug) {
-        GjLogger.isDebug = isDebug;
+        Logger.isDebug = isDebug;
     }
 
     public static int getLevel() {
@@ -55,6 +55,6 @@ public final class GjLogger {
     }
 
     public static void setLevel(int level) {
-        GjLogger.level = level;
+        Logger.level = level;
     }
 }

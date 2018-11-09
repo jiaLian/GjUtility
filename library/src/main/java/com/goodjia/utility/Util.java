@@ -42,8 +42,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-public class GjUtil {
-    private static final String TAG = GjUtil.class.getSimpleName();
+public class Util {
+    private static final String TAG = Util.class.getSimpleName();
 
     public static SharedPreferences getSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -307,15 +307,15 @@ public class GjUtil {
                 try {
                     File outFile = new File(targetParentPath, fileName);
                     if (outFile.exists()) {
-                        GjLogger.d(TAG, outFile.getAbsolutePath() + " is exist.");
+                        Logger.d(TAG, outFile.getAbsolutePath() + " is exist.");
                         continue;
                     }
                     in = assetManager.open(assetFolder + File.separatorChar + fileName);
                     out = new FileOutputStream(outFile);
                     copyFile(in, out);
-                    GjLogger.d(TAG, "Copy " + fileName + " is successfully from assets.");
+                    Logger.d(TAG, "Copy " + fileName + " is successfully from assets.");
                 } catch (IOException e) {
-                    GjLogger.e(TAG, "Failed to copy asset file: " + fileName);
+                    Logger.e(TAG, "Failed to copy asset file: " + fileName);
                 } finally {
                     if (in != null) {
                         try {

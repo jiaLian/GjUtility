@@ -6,9 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.widget.TextView;
 
-import com.goodjia.utility.GjLogger;
-import com.goodjia.utility.GjUtil;
 import com.goodjia.utility.HidKeyReader;
+import com.goodjia.utility.Logger;
+import com.goodjia.utility.Util;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,38 +31,38 @@ public class MainActivity extends AppCompatActivity {
         });
 //        hidKeyReader.setDelayMillis(500);
 
-        GjLogger.setIsDebug(BuildConfig.DEBUG);
+        Logger.setIsDebug(BuildConfig.DEBUG);
 
         findViewById(R.id.btnLogD).setOnClickListener(v -> {
-            GjLogger.d(TAG, "btnLogD");
-            GjUtil.toastLong(this, "Log d onclicked");
+            Logger.d(TAG, "btnLogD");
+            Util.toastLong(this, "Log d onclicked");
         });
         findViewById(R.id.btnLogV).setOnClickListener(v -> {
-            GjLogger.v(TAG, "btnLogV");
-            GjUtil.toastShort(this, "Log v onclicked");
+            Logger.v(TAG, "btnLogV");
+            Util.toastShort(this, "Log v onclicked");
         });
         findViewById(R.id.btnLogW).setOnClickListener(v -> {
-            GjLogger.w(TAG, "btnLogW");
-            GjUtil.toastShort(this, R.string.app_name);
+            Logger.w(TAG, "btnLogW");
+            Util.toastShort(this, R.string.app_name);
         });
         findViewById(R.id.btnLogI).setOnClickListener(v -> {
-            GjLogger.i(TAG, "btnLogI");
+            Logger.i(TAG, "btnLogI");
         });
         findViewById(R.id.btnLogE).setOnClickListener(v -> {
-            GjLogger.e(TAG, "btnLogE");
+            Logger.e(TAG, "btnLogE");
         });
 
-        SharedPreferences sharedPreferences = GjUtil.getSharedPreferences(this);
+        SharedPreferences sharedPreferences = Util.getSharedPreferences(this);
         sharedPreferences.edit().putInt("1", 1).commit();
-        GjLogger.d(TAG, "get key 1: " + sharedPreferences.getInt("1", 0));
+        Logger.d(TAG, "get key 1: " + sharedPreferences.getInt("1", 0));
 
-        SharedPreferences sharedPreferences1 = GjUtil.getSharedPreferences(this, "test");
+        SharedPreferences sharedPreferences1 = Util.getSharedPreferences(this, "test");
         sharedPreferences.edit().putString("1", "1").commit();
-        GjLogger.d(TAG, "get key 1: " + sharedPreferences.getString("1", "null"));
+        Logger.d(TAG, "get key 1: " + sharedPreferences.getString("1", "null"));
 
-        GjUtil.toastShort(this, "is network available: " + GjUtil.isNetworkAvailable(this));
+        Util.toastShort(this, "is network available: " + Util.isNetworkAvailable(this));
 
-        GjLogger.d(TAG, "has nav bar: " + GjUtil.hasNavBar(this));
+        Logger.d(TAG, "has nav bar: " + Util.hasNavBar(this));
     }
 
     @Override

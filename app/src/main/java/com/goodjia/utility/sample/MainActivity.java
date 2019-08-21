@@ -47,9 +47,13 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.btnLogI).setOnClickListener(v -> {
             Logger.i(TAG, "btnLogI");
+            boolean isOnline = Util.isOnline(5_000L, "yahoo.com");
+            Logger.d(TAG, "isOnline " + isOnline);
         });
         findViewById(R.id.btnLogE).setOnClickListener(v -> {
             Logger.e(TAG, "btnLogE");
+            boolean isOnline = Util.isOnline(5_000L);
+            Logger.d(TAG, "isOnline " + isOnline);
         });
 
         SharedPreferences sharedPreferences = Util.getSharedPreferences(this);

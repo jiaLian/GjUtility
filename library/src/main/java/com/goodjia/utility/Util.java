@@ -41,6 +41,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class Util {
     private static final String TAG = Util.class.getSimpleName();
@@ -81,6 +87,32 @@ public class Util {
         Toast.makeText(context, messageId, duration).show();
     }
 
+    public static boolean isOnline(long timeout) {
+        return isOnline(timeout, "google.com");
+    }
+
+    public static boolean isOnline(long timeout, final String host) {
+        InetAddress inetAddress = null;
+        try {
+            Future<InetAddress> future = Executors.newSingleThreadExecutor().submit(new Callable<InetAddress>() {
+                @Override
+                public InetAddress call() {
+                    try {
+                        return InetAddress.getByName(host);
+                    } catch (UnknownHostException e) {
+                        return null;
+                    }
+                }
+            });
+            inetAddress = future.get(timeout, TimeUnit.MILLISECONDS);
+            future.cancel(true);
+            Logger.d(TAG, "is online: " + (inetAddress == null ? "" : inetAddress.toString()));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return inetAddress != null && !inetAddress.toString().isEmpty();
+    }
+
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -100,7 +132,8 @@ public class Util {
         imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    public static int getResourceId(Context context, String variableName, String resourceName, String packageName) {
+    public static int getResourceId(Context context, String variableName, String
+            resourceName, String packageName) {
         try {
             return context.getResources().getIdentifier(variableName, resourceName, packageName);
         } catch (Exception e) {
@@ -379,7 +412,9 @@ public class Util {
         return file;
     }
 
-    public static void showDialog(Context context, String title, String message, String positiveText, DialogInterface.OnClickListener positiveOnClickListener, String negativeText, DialogInterface.OnClickListener negativeOnClickListener) {
+    public static void showDialog(Context context, String title, String message, String
+            positiveText, DialogInterface.OnClickListener positiveOnClickListener, String
+                                          negativeText, DialogInterface.OnClickListener negativeOnClickListener) {
         new AlertDialog.Builder(context)
                 .setCancelable(false)
                 .setTitle(title)
@@ -405,7 +440,8 @@ public class Util {
         return BitmapFactory.decodeFile(filePath, options);
     }
 
-    public static int getFitInSampleSize(int reqWidth, int reqHeight, BitmapFactory.Options options) {
+    public static int getFitInSampleSize(int reqWidth, int reqHeight, BitmapFactory.
+            Options options) {
         int inSampleSize = 1;
         if (options.outWidth > reqWidth || options.outHeight > reqHeight) {
             int widthRatio = Math.round((float) options.outWidth / (float) reqWidth);

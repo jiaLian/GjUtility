@@ -9,11 +9,11 @@ import com.goodjia.utility.Util
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener {
 
     private val hidKeyReader by lazy {
-        HidKeyReader { keyCode -> tvHidReader!!.append(keyCode + "\n") }.apply {
-            setDelayMillis(500)
+        HidKeyReader(this).apply {
+            delayMillis = 500
         }
     }
 
@@ -58,6 +58,10 @@ class MainActivity : AppCompatActivity() {
         Util.toastShort(this, "is network available: " + Util.isNetworkAvailable(this))
 
         Logger.d(TAG, "has nav bar: " + Util.hasNavBar(this))
+    }
+
+    override fun onKeyEvent(keyCode: String?) {
+        tvHidReader?.append(keyCode + "\n")
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {

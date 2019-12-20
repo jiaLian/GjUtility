@@ -2,14 +2,14 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-def version= "1.2.0"
+def version= "1.2.1"
 android {
     compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 4
+        versionCode 5
         versionName version
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

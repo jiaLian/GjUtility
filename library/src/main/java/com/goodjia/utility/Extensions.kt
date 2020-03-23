@@ -2,10 +2,25 @@ package com.goodjia.utility
 
 import android.app.Activity
 import android.content.Intent
+import android.view.View
 import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.InputStreamReader
 
+const val FULL_SCREEN_UI_OPTIONS = (
+        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        )
+
+fun Activity.fullscreenOnWindowFocusChanged(hasFocus: Boolean, visibility: Int = FULL_SCREEN_UI_OPTIONS) {
+    if (hasFocus) {
+        window.decorView.systemUiVisibility = visibility
+    }
+}
 
 fun Activity.restartAPP() {
     val intent = baseContext.packageManager.getLaunchIntentForPackage(baseContext.packageName)

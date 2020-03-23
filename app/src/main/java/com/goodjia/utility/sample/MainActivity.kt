@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.goodjia.utility.HidKeyReader
 import com.goodjia.utility.Logger
 import com.goodjia.utility.Util
+import com.goodjia.utility.fullscreenOnWindowFocusChanged
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -58,6 +59,11 @@ class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener {
         Util.toastShort(this, "is network available: " + Util.isNetworkAvailable(this))
 
         Logger.d(TAG, "has nav bar: " + Util.hasNavBar(this))
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        fullscreenOnWindowFocusChanged(hasFocus)
     }
 
     override fun onKeyEvent(keyCode: String?) {

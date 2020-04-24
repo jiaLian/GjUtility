@@ -1,10 +1,14 @@
 package com.goodjia.utility
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Environment
 import android.view.View
 import java.io.BufferedReader
 import java.io.DataOutputStream
+import java.io.File
 import java.io.InputStreamReader
 
 const val FULL_SCREEN_UI_OPTIONS = (
@@ -16,7 +20,10 @@ const val FULL_SCREEN_UI_OPTIONS = (
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         )
 
-fun Activity.fullscreenOnWindowFocusChanged(hasFocus: Boolean, visibility: Int = FULL_SCREEN_UI_OPTIONS) {
+fun Activity.fullscreenOnWindowFocusChanged(
+    hasFocus: Boolean,
+    visibility: Int = FULL_SCREEN_UI_OPTIONS
+) {
     if (hasFocus) {
         window.decorView.systemUiVisibility = visibility
     }
@@ -60,3 +67,23 @@ fun isRooted(): Boolean {
         false
     }
 }
+
+val Context.storageFiles: List<File>?
+    get() {
+        val files: MutableList<File>
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            val suffix =
+                getExternalFilesDir(null)?.absolutePath?.split(Environment.getExternalStorageDirectory().absolutePath)
+                    ?.get(1)
+            val mntFile = File("/mnt")
+            files = mutableListOf()
+            for (file in mntFile.listFiles()) {
+                if (file.canRead() && file.canWrite()) {
+                    files.add(File(file, suffix))
+                }
+            }
+            files
+        } else {
+            getExternalFilesDirs(null)?.toList()
+        }
+    }

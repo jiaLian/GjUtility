@@ -6,11 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.goodjia.utility.HidKeyReader
 import com.goodjia.utility.Logger
 import com.goodjia.utility.Util
+import com.goodjia.utility.device.*
 import com.goodjia.utility.fullscreenOnWindowFocusChanged
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener {
+class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener,
+    DeviceInfoCollector.Listener {
 
     private val hidKeyReader by lazy {
         HidKeyReader(this).apply {
@@ -59,6 +61,23 @@ class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener {
         Util.toastShort(this, "is network available: " + Util.isNetworkAvailable(this))
 
         Logger.d(TAG, "has nav bar: " + Util.hasNavBar(this))
+
+
+        //Testing Device Info Collector
+        DeviceInfoCollector.run {
+            initialize(this@MainActivity, /*lifecycleScope,*/ periodMillisecond = 5_000)
+            registerListener(this@MainActivity)
+            Logger.d(
+                TAG,
+                "deviceBuild ${deviceBuild.json}, display ${display.toDisplayMap().json}, apps ${
+                gson.toJson(appMap)}"
+            )
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        DeviceInfoCollector.unregisterListener(this)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -78,6 +97,29 @@ class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener {
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName
+    }
+
+    override fun updated(
+        systemUptime: Long,
+        storages: List<Storage>,
+        ram: Ram,
+        cpu: Cpu,
+        network: Network?
+    ) {
+        storages.forEach {
+            Logger.d(
+                TAG,
+                "path ${it.path}, free ${it.free.capacity}, total ${it.total.capacity}"
+            )
+        }
+        Logger.d(
+            TAG,
+            "ram free ${ram.free.capacity}, total ${ram.total.capacity}"
+        )
+        Logger.d(
+            TAG,
+            "systemUptime $systemUptime, storages ${gson.toJson(storages)}, ram ${ram.json}, cpu ${cpu.json}, network ${network?.json}"
+        )
     }
 
 }

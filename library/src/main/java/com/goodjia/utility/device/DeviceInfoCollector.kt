@@ -82,10 +82,14 @@ object DeviceInfoCollector {
         get() {
             val cores = cpuFrequency
             var percent = 0L
-            cores.forEach {
-                percent += it.currentFreq * 100 / it.maxFreq
+            try {
+                cores.forEach {
+                    percent += it.currentFreq * 100 / it.maxFreq
+                }
+                percent /= cores.size
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            percent /= cores.size
             return Cpu(cores, percent.toInt(), getCpuTemperature())
         }
 
@@ -124,7 +128,7 @@ object DeviceInfoCollector {
                 }
             }.toList()
     val appMap
-        get() = apps.map { it.packageName.replace('.','_') to it.version }.toMap()
+        get() = apps.map { it.packageName.replace('.', '_') to it.version }.toMap()
 
     @JvmOverloads
     fun initialize(

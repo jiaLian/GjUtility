@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener,
 
         //Testing Device Info Collector
         DeviceInfoCollector.run {
-            initialize(this@MainActivity, /*lifecycleScope,*/ periodMillisecond = 5_000)
+            initialize(this@MainActivity, /*lifecycleScope,*/ periodMillisecond = 10_000)
             registerListener(this@MainActivity)
             Logger.d(
                 TAG,

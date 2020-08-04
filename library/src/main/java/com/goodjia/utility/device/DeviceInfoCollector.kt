@@ -52,7 +52,7 @@ object DeviceInfoCollector {
                 ?.forEach {
                     presentation.add(getScreen(it))
                 }
-            return com.goodjia.utility.device.Display(primacy, presentation)
+            return Display(primacy, presentation)
         }
 
     val storages: List<Storage>

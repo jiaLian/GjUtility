@@ -68,22 +68,49 @@ fun isRooted(): Boolean {
     }
 }
 
-val Context.storageFiles: List<File>?
-    get() {
-        val files: MutableList<File>
-        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            val suffix =
-                getExternalFilesDir(null)?.absolutePath?.split(Environment.getExternalStorageDirectory().absolutePath)
-                    ?.get(1)
-            val mntFile = File("/mnt")
-            files = mutableListOf()
-            for (file in mntFile.listFiles()) {
-                if (file.canRead() && file.canWrite()) {
-                    files.add(File(file, suffix))
+val Context.storageFiles: List<File>
+    get() = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        val suffix =
+            getExternalFilesDir(null)?.absolutePath?.substringAfter(Environment.getExternalStorageDirectory().absolutePath)
+        mutableListOf<File>().apply {
+            suffix?.let {
+                File("/mnt").listFiles()?.forEach {
+                    if (it.canRead() && it.canWrite()) {
+                        add(File(it, suffix))
+                    }
                 }
             }
-            files
-        } else {
-            getExternalFilesDirs(null)?.toList()
         }
+    } else {
+        getExternalFilesDirs(null).toList()
     }
+
+private const val BUTTON_CLICK_EXPIRE_TIME = 30_000L     //minutes
+private const val BUTTON_CLICK_MAX_COUNT = 5
+fun View.onMaxCountLongClick(
+    maxCount: Int = BUTTON_CLICK_MAX_COUNT,
+    expireTimeMillis: Long = BUTTON_CLICK_EXPIRE_TIME,
+    body: () -> Unit
+) {
+    setOnLongClickListener {
+        val clickedTime = getTag(R.id.clickedTime) as? Long ?: 0L
+        val clickedCount =
+            if (System.currentTimeMillis() - clickedTime > expireTimeMillis) {
+                1
+            } else {
+                getTag(R.id.clickedCount) as? Int ?: 1
+            }
+
+        setTag(R.id.clickedTime, System.currentTimeMillis())
+        setTag(
+            R.id.clickedCount,
+            if (clickedCount >= maxCount) {
+                body()
+                1
+            } else {
+                clickedCount + 1
+            }
+        )
+        true
+    }
+}

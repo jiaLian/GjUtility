@@ -28,7 +28,7 @@ object DeviceInfoCollector {
 
     private var context: Context? = null
 
-    private var coroutineScope: CoroutineScope = GlobalScope
+    private var coroutineScope: CoroutineScope? = null
     private var updatedJob: Job? = null
 
     private val listeners = mutableListOf<Listener>()
@@ -133,8 +133,8 @@ object DeviceInfoCollector {
     @JvmOverloads
     fun initialize(
         context: Context,
-        periodMillisecond: Long = DEFAULT_PERIOD,
-        coroutineScope: CoroutineScope = GlobalScope
+        coroutineScope: CoroutineScope? = GlobalScope,
+        periodMillisecond: Long = DEFAULT_PERIOD
     ) {
         this.context = context
         this.coroutineScope = coroutineScope
@@ -158,7 +158,7 @@ object DeviceInfoCollector {
 
     private fun updated() {
         if (updatedJob?.isActive != true) {
-            updatedJob = coroutineScope.launch(Dispatchers.IO) {
+            updatedJob = coroutineScope?.launch(Dispatchers.IO) {
                 while (true) {
                     synchronized(listeners) {
                         listeners.forEach {

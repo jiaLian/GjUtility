@@ -3,17 +3,14 @@ package com.goodjia.utility.sample
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
-import com.goodjia.utility.HidKeyReader
-import com.goodjia.utility.Logger
-import com.goodjia.utility.Util
+import com.goodjia.utility.*
 import com.goodjia.utility.device.*
-import com.goodjia.utility.fullscreenOnWindowFocusChanged
-import kotlinx.android.synthetic.main.activity_main.*
+import com.goodjia.utility.sample.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener,
     DeviceInfoCollector.Listener {
-
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val hidKeyReader by lazy {
         HidKeyReader(this).apply {
             delayMillis = 500L
@@ -22,29 +19,29 @@ class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        btnClearHid.setOnClickListener { tvHidReader.text = "" }
+        setContentView(binding.root)
+        binding.btnClearHid.setOnClickListener { binding.tvHidReader.text = "" }
         Logger.setIsDebug(BuildConfig.DEBUG)
 
-        btnLogD.setOnClickListener {
+        binding.btnLogD.setOnClickListener {
             Logger.d(TAG, "btnLogD")
-            Util.toastLong(this, "Log d onclicked")
+            Util.toastLong(this, "Log d on Clicked")
         }
 
-        btnLogV.setOnClickListener {
+        binding.btnLogV.setOnClickListener {
             Logger.v(TAG, "btnLogV")
-            Util.toastShort(this, "Log v onclicked")
+            Util.toastShort(this, "Log v on Clicked")
         }
-        btnLogW.setOnClickListener {
+        binding.btnLogW.setOnClickListener {
             Logger.w(TAG, "btnLogW")
             Util.toastShort(this, R.string.app_name)
         }
-        btnLogI.setOnClickListener {
+        binding.btnLogI.setOnClickListener {
             Logger.i(TAG, "btnLogI")
             val isOnline = Util.isOnline(5_000L, "yahoo.com")
             Logger.d(TAG, "isOnline $isOnline")
         }
-        btnLogE.setOnClickListener {
+        binding.btnLogE.setOnClickListener {
             Logger.e(TAG, "btnLogE")
             val isOnline = Util.isOnline(5_000L)
             Logger.d(TAG, "isOnline $isOnline")
@@ -70,9 +67,11 @@ class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener,
             Logger.d(
                 TAG,
                 "deviceBuild ${deviceBuild.json}, display ${display.toDisplayMap().json}, apps ${
-                gson.toJson(appMap)}"
+                    gson.toJson(appMap)
+                }"
             )
         }
+        Logger.d(TAG, "files: $storageFiles")
     }
 
     override fun onDestroy() {
@@ -86,7 +85,7 @@ class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener,
     }
 
     override fun onKeyEvent(keyCode: String?) {
-        tvHidReader?.append(keyCode + "\n")
+        binding.tvHidReader?.append(keyCode + "\n")
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {

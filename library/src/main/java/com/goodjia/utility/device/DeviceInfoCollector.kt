@@ -12,10 +12,8 @@ import android.telephony.SignalStrength
 import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.view.Display
-import com.goodjia.utility.Logger
-import com.goodjia.utility.storageFiles
+import com.goodjia.utility.*
 import kotlinx.coroutines.*
-import org.jetbrains.anko.*
 import java.math.BigInteger
 import java.net.Inet4Address
 import java.net.InetAddress
@@ -26,7 +24,7 @@ object DeviceInfoCollector {
     private val TAG = DeviceInfoCollector::class.java.simpleName
     private const val DEFAULT_PERIOD = 10 * 60_000L
 
-    private var context: Context? = null
+    var context: Context? = null
 
     private var coroutineScope: CoroutineScope? = null
     private var updatedJob: Job? = null
@@ -94,9 +92,11 @@ object DeviceInfoCollector {
         }
 
     private var signalStrength: SignalStrength? = null
-    private val phoneStateListener = object : PhoneStateListener() {
-        override fun onSignalStrengthsChanged(signalStrength: SignalStrength?) {
-            this@DeviceInfoCollector.signalStrength = signalStrength
+    private val phoneStateListener by lazy {
+        object : PhoneStateListener() {
+            override fun onSignalStrengthsChanged(signalStrength: SignalStrength?) {
+                this@DeviceInfoCollector.signalStrength = signalStrength
+            }
         }
     }
     val network: Network?
@@ -133,8 +133,8 @@ object DeviceInfoCollector {
     @JvmOverloads
     fun initialize(
         context: Context,
-        coroutineScope: CoroutineScope? = GlobalScope,
-        periodMillisecond: Long = DEFAULT_PERIOD
+        periodMillisecond: Long = DEFAULT_PERIOD,
+        coroutineScope: CoroutineScope? = GlobalScope
     ) {
         this.context = context
         this.coroutineScope = coroutineScope

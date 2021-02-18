@@ -1,11 +1,17 @@
 package com.goodjia.utility
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.hardware.display.DisplayManager
+import android.net.ConnectivityManager
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Environment
+import android.telephony.TelephonyManager
 import android.view.View
+import android.view.WindowManager
 import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.File
@@ -19,7 +25,19 @@ const val FULL_SCREEN_UI_OPTIONS = (
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         )
+val Context.activityManager: ActivityManager
+    get() = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
+val Context.displayManager: DisplayManager
+    get() = getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+val Context.windowManager: WindowManager
+    get() = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+val Context.connectivityManager: ConnectivityManager
+    get() = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+val Context.telephonyManager: TelephonyManager
+    get() = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+val Context.wifiManager: WifiManager
+    get() = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 fun Activity.fullscreenOnWindowFocusChanged(
     hasFocus: Boolean,
     visibility: Int = FULL_SCREEN_UI_OPTIONS
@@ -72,10 +90,13 @@ val Context.storageFiles: List<File>
     get() = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
         val suffix =
             getExternalFilesDir(null)?.absolutePath?.substringAfter(Environment.getExternalStorageDirectory().absolutePath)
+        Logger.d("files", suffix)
         mutableListOf<File>().apply {
             suffix?.let {
                 File("/mnt").listFiles()?.forEach {
+                    Logger.d("files", "list ${it.absolutePath}")
                     if (it.canRead() && it.canWrite()) {
+                        Logger.d("files", "list ${it.absolutePath}")
                         add(File(it, suffix))
                     }
                 }

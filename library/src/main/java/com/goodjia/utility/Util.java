@@ -21,8 +21,6 @@ import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -30,6 +28,9 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,6 +44,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -188,8 +190,12 @@ public class Util {
         return aBuffer;
     }
 
-    public static String getDeviceUUID(Context context) {
+    public static String getDeviceId(Context context) {
         return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    public static String getDeviceUuid(Context context) {
+        return UUID.nameUUIDFromBytes(getDeviceId(context).getBytes()).toString();
     }
 
     public static String getHtmlBold(String string) {

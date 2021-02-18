@@ -1,16 +1,17 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-def version = "1.3.9"
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+def verCode = 19
+def verName = "1.3.12"
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 14
-        versionName version
+        targetSdkVersion 30
+        versionCode verCode
+        versionName verName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -32,18 +33,95 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation "org.jetbrains.anko:anko:$anko_version"
-    api 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
 }
-publish {
-    repoName = 'goodJia'           //bintray仓库名
-    userOrg = 'jialian'           //bintray注册的用户名
-    groupId = 'com.goodjia'            //compile引用时的第1部分groupId
-    artifactId = 'utility'       //compile引用时的第2部分项目名
-    publishVersion = version       //compile引用时的第3部分版本号
-    desc = 'Good Jia utility android library'//描述，不重要
-    website = 'https://github.com/jiaLian/GjUtility'//网站，不重要；尽量模拟github上的地址
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+def artifact_group = 'com.goodjia'
+def artifact_id = 'utility'
+def repoName = 'goodJia'
+def siteUrl = 'https://github.com/jiaLian/GjUtility' // Git仓库的url。
+def gitUrl = 'https://github.com/jiaLian/GjUtility.git' // Git仓库的url。
+def descr = "This is a utility library"
+def author = "jia.lian"
+def mail = "lianjiayou@gmail.com"
+
+group = artifact_group
+version = verName
+
+bintray {
+    user = properties.getProperty("bintray.user") // Bintray的用户名。
+    key = properties.getProperty("bintray.apikey") // Bintray刚才保存的ApiKey。
+    configurations = ['archives']
+    pkg {
+        repo = repoName
+        // 上传到maven库。（这里要特别注意，如果写了maven报404错误，请在bintray创建一个仓库，这里填改成你创建的仓库的名字，如何创建请看下图。）
+        name = artifact_id
+        // 发布到Bintray上的项目名字，这里的名字不是compile 'com.yanzhenjie:andserver:1.0.1'中的andserver。
+        desc = descr
+        userOrg = properties.getProperty("bintray.user") // Bintray的用户名，2016年11月更新。
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true // 是否是公开项目。
+        version {
+            name = verName //Bintray logical version name
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name artifact_id
+            description descr
+            packaging 'aar'
+            groupId artifact_group
+            artifactId artifact_id
+            version verName
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+            }
+            scm {
+                connection gitUrl
+                url siteUrl
+            }
+            developers {
+                developer {
+                    name author
+                    email mail
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from android.sourceSets.main.java.srcDirs
+}
+
+//task javadoc(type: Javadoc) {
+//    failOnError false
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//}
+//
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    archiveClassifier.set("javadoc")
+//    from javadoc.destinationDir
+//}
+
+artifacts {
+//    archives javadocJar
+    archives sourcesJar
 }

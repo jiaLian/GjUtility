@@ -1,9 +1,10 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 def verCode = 20
 def verName = "1.3.13"
+def group = 'com.goodjia'
+def artif = 'utility'
 android {
     compileSdkVersion 30
 
@@ -32,7 +33,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -46,8 +47,8 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 publishing {
     publications {
         aar(MavenPublication) {
-            groupId = 'com.goodjia'
-            artifactId = 'utility'
+            groupId = group
+            artifactId = artif
             version = verName
             artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
             pom.withXml {
@@ -83,27 +84,14 @@ publishing {
             }
         }
     }
-}
 
-artifactoryPublish {
-    publications(publishing.publications.aar)
-}
-artifactoryPublish.dependsOn('assembleRelease')
-artifactory {
-    contextUrl = 'https://goodjia.jfrog.io/artifactory'
-    publish {
-        repository {
-            repoKey = 'goodjia' // The Artifactory repository key to publish to
-            username = properties.getProperty('jforg.user') // The publisher user name
-            password = properties.getProperty('jforg.pwdkey') // The publisher password
-
-        }
-        defaults {
-            publications('aar')
-            publishArtifacts = true
-            // Properties to be attached to the published artifacts.
-            properties = ['qa.level': 'basic', 'dev.team': 'core']
-            publishPom = true // Publish generated POM files to Artifactory (true by default)
+    repositories {
+        maven {
+            url properties.getProperty('azure.url')
+            credentials {
+                username properties.getProperty('azure.feed')
+                password properties.getProperty('azure.token')
+            }
         }
     }
 }

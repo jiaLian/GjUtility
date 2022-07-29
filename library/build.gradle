@@ -1,21 +1,17 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'maven-publish'
-def verCode = 20
-def verName = "1.3.13"
+def verCode = 21
+def verName = "1.3.14"
 def group = 'com.goodjia'
 def artif = 'utility'
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
-        versionCode verCode
-        versionName verName
-
+        targetSdkVersion 32
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -24,21 +20,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    lintOptions {
+    lint {
         abortOnError false
     }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
 }
 
 Properties properties = new Properties()
@@ -68,15 +64,16 @@ publishing {
                         exclusionNode.appendNode('artifactId', '*')
                     } else if (!dep.properties.excludeRules.empty) {
                         // Otherwise add specified exclude rules
-                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                        final exclusionsNode = dependencyNode.appendNode('exclusions')
                         dep.properties.excludeRules.each { ExcludeRule rule ->
+                            final exclusionNode = exclusionsNode.appendNode('exclusion')
                             exclusionNode.appendNode('groupId', rule.group ?: '*')
                             exclusionNode.appendNode('artifactId', rule.module ?: '*')
                         }
                     }
                 }
                 // List all "compile" dependencies (for old Gradle)
-                configurations.compile.getDependencies().each { dep -> addDependency(dep, "compile") }
+//                configurations.compile.getDependencies().each { dep -> addDependency(dep, "compile") }
                 // List all "api" dependencies (for new Gradle) as "compile" dependencies
                 configurations.api.getDependencies().each { dep -> addDependency(dep, "compile") }
                 // List all "implementation" dependencies (for new Gradle) as "runtime" dependencies

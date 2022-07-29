@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener,
     override fun onDestroy() {
         super.onDestroy()
         DeviceInfoCollector.unregisterListener(this)
+        hidKeyReader.destroy()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

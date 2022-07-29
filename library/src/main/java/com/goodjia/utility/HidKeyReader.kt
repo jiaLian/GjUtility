@@ -1,18 +1,36 @@
 package com.goodjia.utility
 
 import android.os.Handler
+import android.os.HandlerThread
 import android.view.KeyEvent
 import com.goodjia.utility.HidKeyReader
 
-class HidKeyReader @JvmOverloads constructor(private val hidKeyListener: HidKeyListener?) {
+class HidKeyReader @JvmOverloads constructor(hidKeyListener: HidKeyListener? = null) {
     private val code = StringBuilder()
-    private val handler = Handler(Handler.Callback { msg ->
-        if (msg.what == HANDLER_WHAT_PUBLISH) {
-            publish()
+    private val handlerThread by lazy {
+        HandlerThread(TAG)
+    }
+    private val handler by lazy {
+        Handler(handlerThread.looper) { msg ->
+            if (msg.what == HANDLER_WHAT_PUBLISH) {
+                publish()
+            }
+            true
         }
-        true
-    })
+    }
+
+    private val hidKeyListeners by lazy {
+        mutableListOf<HidKeyListener>()
+    }
+
     var delayMillis = DELAY_MILLIS
+
+    init {
+        handlerThread.start()
+        hidKeyListener?.let {
+            addOnHidKeyListener(it)
+        }
+    }
 
     @JvmOverloads
     fun parseKeyEvent(keyCode: Int, event: KeyEvent, action: Int = KeyEvent.ACTION_DOWN) {
@@ -26,12 +44,33 @@ class HidKeyReader @JvmOverloads constructor(private val hidKeyListener: HidKeyL
         }
     }
 
-    private fun publish() {
-        if (code.toString().isNotEmpty() && hidKeyListener != null) {
-            hidKeyListener.onKeyEvent(code.toString())
+    fun destroy() {
+        hidKeyListeners.clear()
+        handlerThread.quit()
+    }
+
+    fun addOnHidKeyListener(hidKeyListener: HidKeyListener) {
+        synchronized(hidKeyListeners) {
+            hidKeyListeners.add(hidKeyListener)
         }
-        code.setLength(0)
-        handler.removeCallbacksAndMessages(null)
+    }
+
+    fun removeOnHidKeyListener(hidKeyListener: HidKeyListener) {
+        synchronized(hidKeyListeners) {
+            hidKeyListeners.remove(hidKeyListener)
+        }
+    }
+
+    private fun publish() {
+        synchronized(hidKeyListeners) {
+            if (code.toString().isNotEmpty()) {
+                hidKeyListeners.forEach {
+                    it.onKeyEvent(code.toString())
+                }
+            }
+            code.setLength(0)
+            handler.removeCallbacksAndMessages(null)
+        }
     }
 
     interface HidKeyListener {
@@ -39,7 +78,7 @@ class HidKeyReader @JvmOverloads constructor(private val hidKeyListener: HidKeyL
     }
 
     companion object {
-        private val TAG = HidKeyReader::class.java.simpleName
+        private val TAG = HidKeyReader::class.simpleName
         private const val HANDLER_WHAT_PUBLISH = 12
         private const val DELAY_MILLIS = 300L
     }

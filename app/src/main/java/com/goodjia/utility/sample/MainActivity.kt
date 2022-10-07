@@ -89,10 +89,10 @@ class MainActivity : AppCompatActivity(), HidKeyReader.HidKeyListener,
         binding.tvHidReader?.append(keyCode + "\n")
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
 //        hidKeyReader.parseKeyEvent(keyCode, event,KeyEvent.ACTION_UP)
-        hidKeyReader.parseKeyEvent(keyCode, event)
-        return super.onKeyDown(keyCode, event)
+        event?.let { hidKeyReader.parseKeyEvent(it.keyCode, it) }
+        return super.dispatchKeyEvent(event)
     }
 
     companion object {
